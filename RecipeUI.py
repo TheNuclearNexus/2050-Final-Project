@@ -1,3 +1,5 @@
+from PyQt5.QtWidgets import  *
+
 #initalizes variables such as window height, width, and calls setup_window() to set up the window
 def __init__():
     return 0
@@ -21,6 +23,7 @@ def first():
     return 0
 
 def last():
+    return 0
 
 def search(recipe_keywords):
     return 0
