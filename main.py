@@ -1,13 +1,15 @@
 import sys
-from PyQt5.QtWidgets import  *
-from PyQt5.QtGui import QIcon
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-from RecipeUI import RecipeUI
+from RecipeUI import Ui_main_window
 
 def main():
-    app = QApplication(sys.argv)
-    gui = RecipeUI()
-    gui.show()
+
+    app = QtWidgets.QApplication(sys.argv)
+    main_window = QtWidgets.QMainWindow()
+    ui = Ui_main_window()
+    ui.setupUi(main_window)
+    main_window.show()
     sys.exit(app.exec_())
     
 main()
