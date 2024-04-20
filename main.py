@@ -9,4 +9,5 @@ def main():
     gui = RecipeUI()
     gui.show()
     sys.exit(app.exec_())
+    
 main()
