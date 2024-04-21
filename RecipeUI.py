@@ -10,9 +10,14 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from RecipeDetails import RecipeDetails
+from RecipeProcessor import RecipeProcessor
 
+processor = RecipeProcessor()
 class Ui_main_window(QtWidgets.QMainWindow):
     def setupUi(self, main_window):
+        processor.load_recipes("recipes.json")
+
         main_window.setObjectName("main_window")
         main_window.resize(642, 737)
         self.centralwidget = QtWidgets.QWidget(main_window)
@@ -295,8 +300,16 @@ class Ui_main_window(QtWidgets.QMainWindow):
         self.action_update = QtWidgets.QAction(main_window)
         self.action_update.setObjectName("action_update")
 
+        self.pushButton_2.clicked.connect(self.show_recipe)
+
         self.retranslateUi(main_window)
         QtCore.QMetaObject.connectSlotsByName(main_window)
+
+    def show_recipe(self, button):
+        dialog = RecipeDetails()
+        dialog.setupUi(dialog)
+        dialog.set_recipe(processor.get_recipes()[0], 0)
+        dialog.exec()
 
     def retranslateUi(self, main_window):
         _translate = QtCore.QCoreApplication.translate
@@ -374,6 +387,7 @@ class Ui_main_window(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     import sys
+    processor.load_recipes("recipes.json")
     app = QtWidgets.QApplication(sys.argv)
     main_window = QtWidgets.QMainWindow()
     ui = Ui_main_window()
