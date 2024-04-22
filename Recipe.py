@@ -29,6 +29,10 @@ class Recipe:
     # returns the recipeYield for a given recipe
     def get_recipe_yield(self):
         return self.recipe_yield
+    
+    # returns ingredients
+    def get_ingredients(self):
+        return self.ingredients
 
     #downloads an image from the web and displays it in the UI. An ASCII-based progress-bar must be
     #displayed in the command line as images are downloaded. This should include the index of the image downloaded so

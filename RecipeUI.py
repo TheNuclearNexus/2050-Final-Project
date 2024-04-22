@@ -9,6 +9,7 @@ from RecipeProcessor import RecipeProcessor
 from RecipeDetails import RecipeDetails
 recipes = RecipeProcessor()
 recipes.load_recipes("recipes.json")
+recipe_num = recipes.get_recipe_num()
 
 
 class RecipeUI(QMainWindow,QWidget):
@@ -33,16 +34,15 @@ class RecipeUI(QMainWindow,QWidget):
         self.search_bar = QLineEdit()
         search_button = QPushButton('Search')
         reset_button = QPushButton('Reset')
-        # Connect buttons to their functions...
+ 
         search_layout.addWidget(self.search_bar)
         search_layout.addWidget(search_button)
         search_layout.addWidget(reset_button)
 
-        # search_button.clicked.connect(self.search(self, recipe_keywords))
+        search_button.clicked.connect(self.clicked_search)
         reset_button.clicked.connect(self.reset)
 
-        # Create a grid layout for recipes
-        # self.recipe_grid = QGridLayout()
+        # Create a grid
         self.recipe_grid = self.layout_ui(recipes)
 
 
@@ -110,7 +110,8 @@ class RecipeUI(QMainWindow,QWidget):
                 recipe_layout.addWidget(prep_time_label)
                 recipe_layout.addWidget(cook_time_label)
                 recipe_layout.addWidget(view_recipe_button)
-                
+
+                # The code is working not as I intentioned!!!!
                 # view_recipe_button.clicked.connect(self.show_recipe(i))
 
                 grid_layout.addWidget(recipe_widget, (i+1) // 2, (i+1) % 2)  # 2 columns grid
@@ -158,9 +159,35 @@ class RecipeUI(QMainWindow,QWidget):
         details.set_recipe(recipes.get_recipes()[index], index + 1)
         details.exec()
 
+    def clicked_search(self):
+        
+        search_text = self.search_bar.text()
+        self.search(search_text)
+        
+    def get_all_info(self, i):
+        recipe_processor = RecipeProcessor()
+        recipes = recipe_processor.get_recipes()
+        all_to_string = str(recipes[i].get_name()) + str(recipes[i].get_description) + str(recipes[i].get_recipe_yield()) + str(recipes[i].get_ingredients())
+        all_to_string = all_to_string.lower()
+        return all_to_string
+
     def search(self, recipe_keywords):
         
-        pass
+        found_recipe = []
+
+        search_text = recipe_keywords.lower()
+        for i in range(recipe_num): 
+            word = self.get_all_info(i)
+            if search_text in word:
+                found_recipe.append(recipes[i])
+                break
+        if len(found_recipe):
+            pass
+        else:
+            self.layout_ui(found_recipe)
+
+
+    
 
     def reset(self):
         pass

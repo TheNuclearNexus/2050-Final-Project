@@ -9,6 +9,7 @@ from Recipe import Recipe
 
 class RecipeProcessor:
     recipes: list = []
+    recipe_num = 0
 
     def __init__(self) -> None:
         pass 
@@ -72,9 +73,11 @@ class RecipeProcessor:
 
             print(f"\rDownloading image {i + 1} / {len(json_data)}", end="")
             recipe.set_image(image_url)
-
+            self.recipe_num = self.recipe_num + 1
             self.recipes.append(recipe)
 
+    def get_recipe_num(self):
+        return self.recipe_num
 
     def get_recipes(self):
         return self.recipes
