@@ -150,8 +150,9 @@ class RecipeUI(QMainWindow,QWidget):
         max_page = (self.max_num - 1)//4
         if self.current_page == max_page:
             pass
-        self.current_page = max_page
-        self.setup_window()
+        else:
+            self.current_page = max_page
+            self.setup_window()
 
     def show_recipe(self, index: int):
         details = RecipeDetails()
