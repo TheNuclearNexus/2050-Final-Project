@@ -7,16 +7,17 @@ from PyQt5.QtCore import Qt
 from Recipe import Recipe
 from RecipeProcessor import RecipeProcessor
 from RecipeDetails import RecipeDetails
-recipes = RecipeProcessor()
-recipes.load_recipes("recipes.json")
-recipe_num = recipes.get_recipe_num()
+recipes_processor = RecipeProcessor()
+recipes_processor.load_recipes("recipes.json")
+recipe_num = recipes_processor.get_recipe_num()
 
 
 class RecipeUI(QMainWindow,QWidget):
     def __init__(self, parent=None):
-        self.current_page = 0
+        self.current_index = 0
         self.recipes_per_page = 4
         super(RecipeUI, self).__init__(parent)
+        self.recipes = recipes_processor.get_recipes()
         self.setup_window()
 
 
@@ -43,7 +44,7 @@ class RecipeUI(QMainWindow,QWidget):
         reset_button.clicked.connect(self.reset)
 
         # Create a grid
-        self.recipe_grid = self.layout_ui(recipes)
+        self.recipe_grid = self.layout_ui(self.recipes)
 
 
 
@@ -76,31 +77,33 @@ class RecipeUI(QMainWindow,QWidget):
         main_layout.addLayout(navigation_layout)
 
     def layout_ui(self, recipes):
-        
-        recipes = recipes.get_recipes()
+
         self.max_num = len(recipes)
         # Setup the grid layout
         grid_layout = QGridLayout()
-
+        
         # Create and add recipe cards to the grid layout
-        for i in range(4*self.current_page-1,4*self.current_page+3):
-            if i > self.max_num:
+        for i in range(0,4):
+            if i >= len(recipes):
+                recipe_widget = QWidget()
+                grid_layout.addWidget(recipe_widget, i // 2, i % 2) 
+            elif i > self.max_num:
                 return grid_layout
             else:
-
+                index = self.current_index + i
 
                 recipe_widget = QWidget()
                 recipe_layout = QVBoxLayout(recipe_widget)
 
                 image_label = QLabel()
-                pixmap = QPixmap(recipes[i].get_image()) 
+                pixmap = QPixmap(recipes[index].get_image()) 
                 image_label.setPixmap(pixmap.scaled(200, 180, Qt.KeepAspectRatio))
                 recipe_layout.addWidget(image_label)
         
-                recipe_number_label = QLabel(f'Recipe #: {i+2}')
-                recipe_name_label = QLabel(f'Recipe Name: {recipes[i].get_name()}')  # Update with actual recipe name
-                prep_time_label = QLabel(f'Prep Time: {recipes[i].get_prep_time()}')  # Update with actual prep time
-                cook_time_label = QLabel(f'Cook Time: {recipes[i].get_cook_time()}')  # Update with actual cook time
+                recipe_number_label = QLabel(f'Recipe #: {index + 1}')
+                recipe_name_label = QLabel(f'Recipe Name: {recipes[index].get_name()}')  # Update with actual recipe name
+                prep_time_label = QLabel(f'Prep Time: {recipes[index].get_prep_time()}')  # Update with actual prep time
+                cook_time_label = QLabel(f'Cook Time: {recipes[index].get_cook_time()}')  # Update with actual cook time
                 view_recipe_button = QPushButton('View Recipe')
                 # Optional: Connect view_recipe_button to a function to handle button click
                 
@@ -112,52 +115,58 @@ class RecipeUI(QMainWindow,QWidget):
                 recipe_layout.addWidget(view_recipe_button)
 
                 # The code is working not as I intentioned!!!!
-                # view_recipe_button.clicked.connect(self.show_recipe(i))
+                
+                if i % 4 == 0:
+                    view_recipe_button.clicked.connect(lambda _ : self.show_recipe(self.current_index))
+                elif i % 4 == 1:
+                    view_recipe_button.clicked.connect(lambda _ : self.show_recipe(self.current_index + 1))
+                elif i % 4 == 2:
+                    view_recipe_button.clicked.connect(lambda _ : self.show_recipe(self.current_index + 2))
+                elif i % 4 == 3:
+                    view_recipe_button.clicked.connect(lambda _ : self.show_recipe(self.current_index + 3))
 
-                grid_layout.addWidget(recipe_widget, (i+1) // 2, (i+1) % 2)  # 2 columns grid
+                grid_layout.addWidget(recipe_widget, i // 2, i % 2)  # 2 columns grid
 
         # Set the grid layout to the main window
         self.setLayout(grid_layout)
 
         return grid_layout
 
-    
     def next(self):
         
-        if self.current_page == (self.max_num - 1)//4:
+        if self.current_index >= len(self.recipes)-4:
             return
         else:
-            self.current_page = self.current_page + 1
+            self.current_index = self.current_index + 4
             self.setup_window()
        
 
     def previous(self):
         
-        if self.current_page == 0:
-            pass
+        if self.current_index < 4:
+            self.current_index = 0
         else:
-            self.current_page = self.current_page - 1
-            self.setup_window()
+            self.current_index = self.current_index - 4
+        
+        self.setup_window()
         
 
     def first(self):
-        self.current_page = 0
+        self.current_index = 0
         self.setup_window()
 
 
     def last(self):
         
-        max_page = (self.max_num - 1)//4
-        if self.current_page == max_page:
-            pass
-        else:
-            self.current_page = max_page
-            self.setup_window()
+        self.current_index = len(self.recipes)-4
+        if self.current_index < 0:
+            self.current_index = 0
+        
+        self.setup_window()
 
     def show_recipe(self, index: int):
         details = RecipeDetails()
-        details.setupUi(details)
-        details.set_recipe(recipes.get_recipes()[index], index + 1)
+        details.set_recipe(self.recipes[index], index + 1)
         details.exec()
 
     def clicked_search(self):
@@ -166,9 +175,12 @@ class RecipeUI(QMainWindow,QWidget):
         self.search(search_text)
         
     def get_all_info(self, i):
-        recipe_processor = RecipeProcessor()
-        recipes = recipe_processor.get_recipes()
-        all_to_string = str(recipes[i].get_name()) + str(recipes[i].get_description) + str(recipes[i].get_recipe_yield()) + str(recipes[i].get_ingredients())
+        recipes = recipes_processor.get_recipes()
+        all_to_string = " ".join([recipes[i].get_name() 
+                                  , recipes[i].get_description() , 
+                                  recipes[i].get_recipe_yield() , 
+                                  " ".join(recipes[i].get_ingredients())])
+        
         all_to_string = all_to_string.lower()
         return all_to_string
 
@@ -177,24 +189,29 @@ class RecipeUI(QMainWindow,QWidget):
         found_recipe = []
 
         search_text = recipe_keywords.lower()
+        recipes_search = recipes_processor.get_recipes()
+
         for i in range(recipe_num): 
             word = self.get_all_info(i)
             if search_text in word:
-                found_recipe.append(recipes[i])
+                found_recipe.append(recipes_search[i])
                 break
-        if len(found_recipe):
+
+        if len(found_recipe) == 0:
             pass
         else:
-            self.layout_ui(found_recipe)
+            self.current_index=0
+            self.recipes = found_recipe
+            self.setup_window()
 
 
     
 
     def reset(self):
-        pass
+        self.current_index=0
+        self.recipes = recipes_processor.get_recipes()
+        self.setup_window()
 
-
-# Entry point of the application
 if __name__ == '__main__':
     
     app = QApplication(sys.argv)
