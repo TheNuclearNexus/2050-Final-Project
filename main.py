@@ -1,7 +1,7 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from RecipeUI import Ui_main_window
+from PYQTCreatorRecipeUI import Ui_main_window
 
 def main():
 

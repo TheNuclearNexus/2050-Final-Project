@@ -34,11 +34,14 @@ class Recipe:
     #displayed in the command line as images are downloaded. This should include the index of the image downloaded so
     #far. (Example: ! Downloading image 10 of xxx . . . ) <- look at PDF
     def set_image(self, url):     
-        file_name = url.split('/')[-1]
-        self.image = f"images/{file_name}"
+        try:
+            file_name = url.split('/')[-1]
+            self.image = f"images/{file_name}"
 
-        if not os.path.exists(self.image):
-            open(self.image, 'wb+').write(requests.get(url).content)
+            if not os.path.exists(self.image):
+                open(self.image, 'wb+').write(requests.get(url).content)
+        except:
+            pass
 
     # returns the name of an image file for saving or displaying in the UI
     def get_image(self):
