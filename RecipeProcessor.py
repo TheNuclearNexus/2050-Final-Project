@@ -41,6 +41,9 @@ class RecipeProcessor:
         if not os.path.exists(json_file):
             raise FileNotFoundError("JSON File does not exist")
         
+        if not os.path.exists('./images'):
+            os.mkdir("./images")
+        
         json_data: list[dict] = json.loads(open(json_file, 'r', encoding='utf8').read()) 
         print("""
  /$$$$$$$                      /$$                           /$$$$$$$$ /$$       /$$                    
