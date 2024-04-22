@@ -124,7 +124,7 @@ class RecipeUI(QMainWindow,QWidget):
     
     def next(self):
         
-        if self.current_page == self.max_num:
+        if self.current_page == (self.max_num - 1)//4:
             return
         else:
             self.current_page = self.current_page + 1
