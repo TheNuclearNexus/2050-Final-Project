@@ -6,38 +6,51 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>588</width>
-    <height>505</height>
+    <width>642</width>
+    <height>735</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="horizontalLayoutWidget_4">
+   <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>9</x>
-      <y>0</y>
-      <width>621</width>
-      <height>33</height>
+      <x>0</x>
+      <y>40</y>
+      <width>641</width>
+      <height>171</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="search_bar_layout">
+    <layout class="QHBoxLayout" name="recipie_row_0">
      <item>
-      <widget class="QLineEdit" name="search_bar"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="search_button">
+      <widget class="QLabel" name="recepie_1_pic">
        <property name="text">
-        <string>Search</string>
+        <string>TextLabel</string>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="reset_button">
+      <widget class="QLabel" name="recepie_2_pic">
        <property name="text">
-        <string>Reset</string>
+        <string>TextLabel</string>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="recepie_3_pic">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
