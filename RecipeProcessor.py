@@ -78,6 +78,8 @@ class RecipeProcessor:
             recipe.set_image(image_url)
             self.recipe_num = self.recipe_num + 1
             self.recipes.append(recipe)
+        
+        print()
 
     def get_recipe_num(self):
         return self.recipe_num

@@ -46,12 +46,6 @@ class RecipeUI(QMainWindow,QWidget):
         # Create a grid
         self.recipe_grid = self.layout_ui(self.recipes)
 
-
-
-
-
-
-
         # Add navigation buttons at the bottom
         navigation_layout = QHBoxLayout()
         first_button = QPushButton('First')
@@ -59,7 +53,12 @@ class RecipeUI(QMainWindow,QWidget):
         next_button = QPushButton('Next')
         last_button = QPushButton('Last')
 
-        
+        # Add display label
+        display_label = QLabel(f"Displaying {self.current_index + 1}-{min(self.current_index + 4, len(self.recipes))} of {len(self.recipes)} recipes")
+        display_label.setSizePolicy(QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        display_label.setStyleSheet("background-color: #ddd; padding: 6px;")
+        displaying_layout = QHBoxLayout()
+        displaying_layout.addWidget(display_label)
         
         # Connect buttons to their functions...
         navigation_layout.addWidget(first_button)
@@ -72,9 +71,10 @@ class RecipeUI(QMainWindow,QWidget):
         next_button.clicked.connect(self.next)
         last_button.clicked.connect(self.last)
         # Combine all layouts into the main layout
-        main_layout.addLayout(search_layout)
-        main_layout.addLayout(self.recipe_grid)
-        main_layout.addLayout(navigation_layout)
+        main_layout.addLayout(search_layout, stretch=0)
+        main_layout.addLayout(self.recipe_grid, stretch=10)
+        main_layout.addLayout(navigation_layout, stretch=0)
+        main_layout.addWidget(display_label, stretch=0)
 
     def layout_ui(self, recipes):
 
@@ -128,7 +128,8 @@ class RecipeUI(QMainWindow,QWidget):
                 grid_layout.addWidget(recipe_widget, i // 2, i % 2)  # 2 columns grid
 
         # Set the grid layout to the main window
-        self.setLayout(grid_layout)
+        if self.layout() == None:
+            self.setLayout(grid_layout)
 
         return grid_layout
 
@@ -174,12 +175,13 @@ class RecipeUI(QMainWindow,QWidget):
         search_text = self.search_bar.text()
         self.search(search_text)
         
-    def get_all_info(self, i):
-        recipes = recipes_processor.get_recipes()
-        all_to_string = " ".join([recipes[i].get_name() 
-                                  , recipes[i].get_description() , 
-                                  recipes[i].get_recipe_yield() , 
-                                  " ".join(recipes[i].get_ingredients())])
+    def get_all_info(self, recipe: Recipe):
+        all_to_string = " ".join([
+            recipe.get_name(),
+            recipe.get_description(), 
+            recipe.get_recipe_yield(),
+            " ".join(recipe.get_ingredients())
+        ])
         
         all_to_string = all_to_string.lower()
         return all_to_string
@@ -189,20 +191,18 @@ class RecipeUI(QMainWindow,QWidget):
         found_recipe = []
 
         search_text = recipe_keywords.lower()
-        recipes_search = recipes_processor.get_recipes()
+        recipes = recipes_processor.get_recipes()
 
-        for i in range(recipe_num): 
-            word = self.get_all_info(i)
+        for recipe in recipes: 
+            word = self.get_all_info(recipe)
             if search_text in word:
-                found_recipe.append(recipes_search[i])
-                break
+                found_recipe.append(recipe)
 
-        if len(found_recipe) == 0:
-            pass
-        else:
-            self.current_index=0
-            self.recipes = found_recipe
-            self.setup_window()
+        print(found_recipe)
+
+        self.current_index=0
+        self.recipes = found_recipe
+        self.setup_window()
 
 
     

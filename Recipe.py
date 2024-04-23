@@ -43,10 +43,13 @@ class Recipe:
             self.image = f"images/{file_name}"
 
             if not os.path.exists(self.image):
-                open(self.image, 'wb+').write(requests.get(url).content)
+                resp = requests.get(url)
+                if resp.status_code != 200:
+                    raise Exception("Failed to download")
+                
+                open(self.image, 'wb+').write(resp.content)
         except:
-            pass
-
+            print(f"\rFailed to download {url}")
     # returns the name of an image file for saving or displaying in the UI
     def get_image(self):
         return self.image
